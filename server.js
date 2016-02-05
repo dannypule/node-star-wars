@@ -3,14 +3,18 @@ const bodyParser = require('body-parser');
 const app = express();
 const MongoClient = require('mongodb').MongoClient;
 
+var db;
+
 app.use(bodyParser.urlencoded({extend: true}));
 
-app.get('/', (req, res) => {
+app.set('view engine', 'ejs');
 
-	db.collection('quotes').find().toArray(function(err, results){
-		console.log(results);
+app.get('/', (req, res) => {
+	db.collection('quotes').find().toArray((err, results)=>{
+        if (err) return console.log(err);
+
+		res.render('index.ejs', {quotes: results});
 	});
-	res.sendFile(__dirname + '/index.html'); 
 });
 
 app.post('/quotes', (req, res) => {
